@@ -1,0 +1,40 @@
+Dun Morogh
+Durotar
+Elwynn Forest
+Mulgore
+Teldrassil
+Tirisfal Glades
+Darkshore
+Loch Modan
+Silverpine Forest
+Westfall
+Barrens
+Redridge Mountains
+Stonetalon Mountains
+Ashenvale
+Duskwood
+Hillsbrad Foothills
+Wetlands
+Thousand Needles
+Alterac Mountains
+Arathi Highlands
+Desolace
+Stranglethorn Vale
+Dustwallow Marsh
+Badlands
+Swamp of Sorrows
+Feralas
+Hinterlands
+Tanaris
+Searing Gorge
+Azshara
+Blasted Lands
+Ungoro Crater
+Felwood
+Burning Steppes
+Western Plaguelands
+Eastern Plaguelands
+Winterspring
+Deadwind Pass
+Moonglade
+Silithus

@@ -1,0 +1,9 @@
+[Unit]
+Description=Splash server to generate javascript.
+After=multi-user.target
+
+[Service]
+ExecStart=/usr/bin/docker run -p 8050:8050 scrapinghub/splash
+
+[Install]
+WantedBy=multi-user.target
