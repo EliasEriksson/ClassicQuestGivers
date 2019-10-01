@@ -14,6 +14,7 @@ class Quest(scrapy.Item):
     link = scrapy.Field()
     level = scrapy.Field()
     req = scrapy.Field()
+    faction = scrapy.Field()
     npc = scrapy.Field()
     npc_link = scrapy.Field()
     zone = scrapy.Field()

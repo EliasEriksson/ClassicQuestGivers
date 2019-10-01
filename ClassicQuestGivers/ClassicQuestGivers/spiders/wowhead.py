@@ -56,6 +56,17 @@ class ZoneSpider(Spider):
             req = element.xpath("td[4]/text()").get()
             quest["req"] = int(req) if req else -1
 
+            faction = element.xpath("td[5]/span/@class").get()
+            if faction:
+                if "horde" in faction:
+                    quest["faction"] = "H"
+                elif "alliance" in faction:
+                    quest["faction"] = "A"
+                else:
+                    quest["faction"] = "N"
+            else:
+                quest["faction"] = "N"
+
             yield scrapy_splash.SplashRequest(url=quest["link"], callback=self.parse_quest, meta={"quest": quest})
 
     def parse(self, response):

@@ -12,6 +12,7 @@ class Quest(Base):
     link = Column(String)
     level = Column(Integer)
     req = Column(Integer)
+    faction = Column(String)
     npc = Column(String)
     npc_link = Column(String)
     zone = Column(String)

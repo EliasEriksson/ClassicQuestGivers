@@ -7,7 +7,7 @@ class ZoneSpider(Spider):
     name = "quests"
 
     def start_requests(self):
-        urls = ["https://classic.wowhead.com/quest=3113/encrypted-memorandum"]
+        urls = ["https://classic.wowhead.com/stranglethorn-vale#quests"]
 
         for url in urls:
             yield scrapy_splash.SplashRequest(url=url, callback=self.parse)
