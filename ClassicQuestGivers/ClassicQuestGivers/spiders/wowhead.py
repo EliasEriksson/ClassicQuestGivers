@@ -1,17 +1,26 @@
 from typing import List
+from pathlib import Path
 from scrapy import Spider
 from scrapy.http.response import Response
 from scrapy.selector.unified import Selector
 from ..items import Quest
 import scrapy_splash
+from .. import PROJECT_ROOT
 
 
 class ZoneSpider(Spider):
     name = "wowhead"
     base_url = "https://classic.wowhead.com"
 
+    def build_urls(self):
+        path = Path(PROJECT_ROOT).joinpath("zones.txt")
+        with open(str(path)) as zones:
+            urls = [f"{self.base_url}/{zone.lower().strip().replace(' ', '-')}#quests"
+                    for zone in zones]
+        return urls
+
     def start_requests(self):
-        urls = ["https://classic.wowhead.com/dun-morogh#quests"]
+        urls = self.build_urls()
 
         for url in urls:
             yield scrapy_splash.SplashRequest(url=url, callback=self.parse_zone)

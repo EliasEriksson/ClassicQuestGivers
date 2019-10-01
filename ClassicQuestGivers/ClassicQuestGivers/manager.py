@@ -20,7 +20,6 @@ class Manager:
         self.close()
 
     def close(self):
-        self.session.commit()
         self.session.close()
 
     def open(self):
@@ -32,8 +31,8 @@ class Manager:
         pass
 
     def add_quest(self, item: Item):
-        exists = self.session.query(Quest.id).filter_by(id=item["id"]) is not None
+        exists = self.session.query(Quest.id).filter_by(id=item["id"]).all()
         if not exists:
-            self.session.add(Quest(**dict(item)))
-
-
+            quest = Quest(**dict(item))
+            self.session.add(quest)
+            self.session.commit()
