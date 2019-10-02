@@ -33,8 +33,8 @@ class Manager:
         if zone:
             return zone.lower().replace(" ", "-").replace("'", "")
 
-    def get_quest(self, level: int, faction: str = "N", levels_hihger=2, levels_lower=2, zone: str = None):
-        upper = 60 if level + levels_hihger > 60 else level + levels_hihger
+    def get_quest(self, level: int, faction: str = "N", levels_higher=2, levels_lower=2, zone: str = None):
+        upper = 60 if level + levels_higher > 60 else level + levels_higher
         lower = 1 if level - levels_lower < 1 else level - levels_lower
         zone = self.format_zone(zone)
 
@@ -44,9 +44,7 @@ class Manager:
         if zone:
             conditions.append(Quest.zone == zone)
 
-        query = self.session.query(Quest).filter(*conditions)
-
-        return query.all()
+        return self.session.query(Quest).filter(*conditions).order_by(Quest.level.asc()).all()
 
     def add_quest(self, item: Item):
         exists = self.session.query(Quest.id).filter_by(id=item["id"]).all()
