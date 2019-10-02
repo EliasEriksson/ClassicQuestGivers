@@ -41,7 +41,6 @@ class ZoneSpider(Spider):
         yield quest
 
     def parse_zone(self, response: Response):
-        # TODO parse for faction
         elements: List[Selector] = response.xpath('//*[@id="tab-quests"]/div[2]/table/tbody/tr')
         for element in elements:
             quest = Quest()

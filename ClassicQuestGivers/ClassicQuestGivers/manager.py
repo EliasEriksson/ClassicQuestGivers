@@ -2,12 +2,13 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 from scrapy import Item
 from .db import Quest
+from . import DATABASE_ADRESS
 
 
 class Manager:
     session: Session
 
-    def __init__(self, engine_adress: str):
+    def __init__(self, engine_adress: str = DATABASE_ADRESS):
         self.engine = create_engine(engine_adress)
         session = sessionmaker()
         session.configure(bind=self.engine)
@@ -27,8 +28,25 @@ class Manager:
         session.configure(bind=self.engine)
         self.session = session()
 
-    def get_quest(self, level: int, levels_hihger=2, levels_lower=2, zone: str = None):
-        pass
+    @staticmethod
+    def format_zone(zone: str) -> str:
+        if zone:
+            return zone.lower().replace(" ", "-").replace("'", "")
+
+    def get_quest(self, level: int, faction: str = "N", levels_hihger=2, levels_lower=2, zone: str = None):
+        upper = 60 if level + levels_hihger > 60 else level + levels_hihger
+        lower = 1 if level - levels_lower < 1 else level - levels_lower
+        zone = self.format_zone(zone)
+
+        conditions = [Quest.level <= upper,
+                      lower <= Quest.level,
+                      Quest.faction.in_(list(faction))]
+        if zone:
+            conditions.append(Quest.zone == zone)
+
+        query = self.session.query(Quest).filter(*conditions)
+
+        return query.all()
 
     def add_quest(self, item: Item):
         exists = self.session.query(Quest.id).filter_by(id=item["id"]).all()
@@ -36,3 +54,5 @@ class Manager:
             quest = Quest(**dict(item))
             self.session.add(quest)
             self.session.commit()
+
+

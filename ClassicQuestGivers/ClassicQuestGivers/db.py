@@ -26,7 +26,7 @@ class Quest(Base):
         cls.metadata.create_all(engine)
 
     def __repr__(self):
-        return f"{self.__class__.__name__}(id={self.id})"
+        return f"{self.__class__.__name__}(id={self.id}, {self.name}, {self.link})"
 
 
 if __name__ == '__main__':
