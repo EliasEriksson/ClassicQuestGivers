@@ -1,13 +1,11 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.orm import sessionmaker
 from scrapy import Item
 from .db import Quest
 from . import DATABASE_ADRESS
 
 
 class Manager:
-    session: Session
-
     def __init__(self, engine_adress: str = DATABASE_ADRESS):
         self.engine = create_engine(engine_adress)
         session = sessionmaker()
@@ -22,11 +20,6 @@ class Manager:
 
     def close(self):
         self.session.close()
-
-    def open(self):
-        session = sessionmaker()
-        session.configure(bind=self.engine)
-        self.session = session()
 
     @staticmethod
     def format_zone(zone: str) -> str:
@@ -52,5 +45,3 @@ class Manager:
             quest = Quest(**dict(item))
             self.session.add(quest)
             self.session.commit()
-
-

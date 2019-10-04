@@ -9,6 +9,9 @@ import scrapy
 
 
 class Quest(scrapy.Item):
+    """
+    data storage for craled info
+    """
     id = scrapy.Field()
     name = scrapy.Field()
     link = scrapy.Field()

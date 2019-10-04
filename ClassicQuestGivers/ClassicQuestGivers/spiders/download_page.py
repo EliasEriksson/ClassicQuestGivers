@@ -4,6 +4,10 @@ import scrapy_splash
 
 
 class ZoneSpider(Spider):
+    """
+    Unused class but can be used to downlaod pages and save them locally by
+    modefying the urls variable
+    """
     name = "quests"
 
     def start_requests(self):

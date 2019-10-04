@@ -1,8 +1,8 @@
 from typing import List
 from pathlib import Path
 from scrapy import Spider
-from scrapy.http.response import Response
 from scrapy.selector.unified import Selector
+from scrapy_splash import SplashResponse
 from ..items import Quest
 import scrapy_splash
 from .. import PROJECT_ROOT
@@ -12,7 +12,12 @@ class ZoneSpider(Spider):
     name = "wowhead"
     base_url = "https://classic.wowhead.com"
 
-    def build_urls(self):
+    def build_urls(self) -> List[str]:
+        """
+        builds the start urls based on the names in zones.txt in the project root
+
+        :return: urls
+        """
         path = Path(PROJECT_ROOT).joinpath("zones.txt")
         with open(str(path)) as zones:
             urls = [f"{self.base_url}/{zone.lower().strip().replace(' ', '-')}#quests"
@@ -20,27 +25,26 @@ class ZoneSpider(Spider):
         return urls
 
     def start_requests(self):
+        """
+        initial requests for the crawler
+
+        :return:
+        """
         urls = self.build_urls()
 
         for url in urls:
             yield scrapy_splash.SplashRequest(url=url, callback=self.parse_zone)
 
-    def parse_quick_facts(self, selector: Selector, quest: Quest):
-        result = selector.re(r"Start:\s(.*</a>)")
-        if result:
-            element = Selector(text=result[0])
-            quest["npc"] = element.xpath("//a/text()").get()
-            quest["npc_link"] = self.base_url + element.xpath("//a/@href").get()
-        else:
-            quest["npc"] = "Unknown"
-            quest["npc_link"] = "Unknown"
+    def parse_zone(self, response: SplashResponse):
+        """
+        parses a wowhead zone page
 
-    def parse_quest(self, response: Response):
-        quest = response.meta.get("quest")
-        self.parse_quick_facts(response.xpath('//*[@id="infobox-contents-0"]/ul/li/div/span'), quest)
-        yield quest
+        gathers quest name, link to the quest, quest id, zone name, recomended level and required level
+        from the page. then proceedes to do a followup request on each quest in the zone.
 
-    def parse_zone(self, response: Response):
+        :param response: splash rendered http response
+        :return:
+        """
         elements: List[Selector] = response.xpath('//*[@id="tab-quests"]/div[2]/table/tbody/tr')
         for element in elements:
             quest = Quest()
@@ -68,5 +72,40 @@ class ZoneSpider(Spider):
 
             yield scrapy_splash.SplashRequest(url=quest["link"], callback=self.parse_quest, meta={"quest": quest})
 
-    def parse(self, response):
-        self.log("Failed to parse with my parsers.")
+    def parse_quest(self, response: SplashResponse):
+        """
+        parses a wowhead quest page
+
+        passes the "quick facts" secton of the page to be parsed by 'parse_quick_facts'
+        :param response: splash rendered http response
+        :return:
+        """
+        quest = response.meta.get("quest")
+        self.parse_quick_facts(response.xpath('//*[@id="infobox-contents-0"]/ul/li/div/span'), quest)
+        yield quest
+
+    def parse_quick_facts(self, selector: Selector, quest: Quest):
+        """
+        parses the quick facts section on a wowhead quest page
+
+        :param selector: selector of the quick facts section
+        :param quest: quest item to store gathered info in
+        :return:
+        """
+        result = selector.re(r"Start:\s(.*</a>)")
+        if result:
+            element = Selector(text=result[0])
+            quest["npc"] = element.xpath("//a/text()").get()
+            quest["npc_link"] = self.base_url + element.xpath("//a/@href").get()
+        else:
+            quest["npc"] = "Unknown"
+            quest["npc_link"] = "Unknown"
+
+    def parse(self, response: SplashResponse):
+        """
+        default fallback parser
+
+        :param response: splash rendered http response
+        :return:
+        """
+        self.log(f"Failed to parse {response.url} with my parsers.")

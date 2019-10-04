@@ -9,7 +9,14 @@ import re
 import json
 
 
-def hyper(link, text):
+def hyper(link, text) -> str:
+    """
+    transforms the link and text into a 'terminal anchor tag'
+
+    :param link: the link to the website
+    :param text: text for the link
+    :return: formated text
+    """
     return f"\e]8;;{link}\e\\\\{text}\e]8;;\e\\\\"
 
 
@@ -19,32 +26,64 @@ def load_json(filename: str):
 
 
 def format_quest(quest: Quest) -> str:
+    """
+    formats the quest into readable text
+
+    :param quest: quest to make readable
+    :return: text ready to be printed
+    """
     return f"Availeble quest {hyper(quest.link, quest.name)} from " \
            f"{hyper(quest.npc_link, quest.npc)} in {quest.zone}.\n" \
            f"Recomended level {quest.level} requires {quest.req}."
 
 
 def printf(text: str):
+    """
+    system call to terminals printf function
+
+    required for 'terminal anchor tags' to work
+    :param text: text to print
+    :return: None
+    """
     os.system(f'printf "{text}\n\n"')
 
 
 def get_wl_profile(path: Path) -> dict:
+    """
+    reads +Wowhead_Looter.lua file for wlProfile variable value
+
+    :param path: path to +Wowhead_Looter.lua
+    :return: content of wlProfile see +Wowhead_Looter.lua for structure
+    """
     content = path.read_text()
     match = re.search(r"wlProfile\s=\s({.*},\n})\n", content, re.DOTALL)
     if match:
         var = lua.decode(match.groups()[0])
         return var
+    raise RuntimeError("Could not find variable wlProfile in given lua file.")
 
 
 def get_wl_profile_data(path: Path) -> dict:
+    """
+    reads +Wowhead_Looter.lua file for wlProfileData variable value
+
+    :param path: path to +Wowhead_Looter.lua
+    :return: content of wlProfileData see +Wowhead_Looter.lua for structure
+    """
     content = path.read_text()
     match = re.search(r"wlProfileData\s=\s({.*},\n})\n", content, re.DOTALL)
     if match:
         var = lua.decode(match.groups()[0])
         return var
+    raise RuntimeError("Could not find variable wlProfileData in given lua file.")
 
 
 def parse():
+    """
+    runs the program from terminal
+
+    :return: 0
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument("character", type=str, help="Your characters name.")
     parser.add_argument("realm", type=str, help="Your characters realm.")
