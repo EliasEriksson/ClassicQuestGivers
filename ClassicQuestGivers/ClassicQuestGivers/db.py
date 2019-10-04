@@ -12,6 +12,7 @@ class Quest(Base):
     link = Column(String)
     level = Column(Integer)
     req = Column(Integer)
+    faction = Column(String)
     npc = Column(String)
     npc_link = Column(String)
     zone = Column(String)
@@ -25,7 +26,7 @@ class Quest(Base):
         cls.metadata.create_all(engine)
 
     def __repr__(self):
-        return f"{self.__class__.__name__}(id={self.id})"
+        return f"{self.__class__.__name__}(id={self.id}, {self.name}, {self.link})"
 
 
 if __name__ == '__main__':

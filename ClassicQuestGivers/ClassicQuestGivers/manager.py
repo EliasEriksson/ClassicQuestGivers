@@ -1,13 +1,12 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.orm import sessionmaker
 from scrapy import Item
 from .db import Quest
+from . import DATABASE_ADRESS
 
 
 class Manager:
-    session: Session
-
-    def __init__(self, engine_adress: str):
+    def __init__(self, engine_adress: str = DATABASE_ADRESS):
         self.engine = create_engine(engine_adress)
         session = sessionmaker()
         session.configure(bind=self.engine)
@@ -20,20 +19,29 @@ class Manager:
         self.close()
 
     def close(self):
-        self.session.commit()
         self.session.close()
 
-    def open(self):
-        session = sessionmaker()
-        session.configure(bind=self.engine)
-        self.session = session()
+    @staticmethod
+    def format_zone(zone: str) -> str:
+        if zone:
+            return zone.lower().replace(" ", "-").replace("'", "")
 
-    def get_quest(self, level: int, levels_hihger=2, levels_lower=2, zone: str = None):
-        pass
+    def get_quest(self, level: int, faction: str = "N", levels_higher=2, levels_lower=2, zone: str = None):
+        upper = 60 if level + levels_higher > 60 else level + levels_higher
+        lower = 1 if level - levels_lower < 1 else level - levels_lower
+        zone = self.format_zone(zone)
+
+        conditions = [Quest.level <= upper,
+                      lower <= Quest.level,
+                      Quest.faction.in_(list(faction))]
+        if zone:
+            conditions.append(Quest.zone == zone)
+
+        return self.session.query(Quest).filter(*conditions).order_by(Quest.level.asc()).all()
 
     def add_quest(self, item: Item):
-        exists = self.session.query(Quest.id).filter_by(id=item["id"]) is not None
+        exists = self.session.query(Quest.id).filter_by(id=item["id"]).all()
         if not exists:
-            self.session.add(Quest(**dict(item)))
-
-
+            quest = Quest(**dict(item))
+            self.session.add(quest)
+            self.session.commit()

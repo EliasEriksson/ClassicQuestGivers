@@ -9,11 +9,15 @@ import scrapy
 
 
 class Quest(scrapy.Item):
+    """
+    data storage for craled info
+    """
     id = scrapy.Field()
     name = scrapy.Field()
     link = scrapy.Field()
     level = scrapy.Field()
     req = scrapy.Field()
+    faction = scrapy.Field()
     npc = scrapy.Field()
     npc_link = scrapy.Field()
     zone = scrapy.Field()

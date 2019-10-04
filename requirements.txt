@@ -1,0 +1,4 @@
+SQLAlchemy
+scrapy_splash
+scrapy
+slpp-23
