@@ -28,6 +28,7 @@ class ClassicquestgiversPipeline:
         :param spider: required unused parameter
         :return: gathered item
         """
+        print(f"\n{item}\n")
         self.client.add_quest(item)
         return item
 

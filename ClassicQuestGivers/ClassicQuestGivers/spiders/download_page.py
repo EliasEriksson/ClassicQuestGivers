@@ -1,5 +1,5 @@
 from scrapy import Spider
-from scrapy.http.response import Response
+from scrapy_splash import SplashResponse
 import scrapy_splash
 
 
@@ -11,12 +11,12 @@ class ZoneSpider(Spider):
     name = "quests"
 
     def start_requests(self):
-        urls = ["https://classic.wowhead.com/stranglethorn-vale#quests"]
+        urls = ["https://classic.wowhead.com/quest=735/the-star-the-hand-and-the-heart"]
 
         for url in urls:
             yield scrapy_splash.SplashRequest(url=url, callback=self.parse)
 
-    def parse(self, response: Response):
+    def parse(self, response: SplashResponse):
         page = response.url.split("/")[-2].replace("=", "-")
         filename = f"{page}.html"
         with open(filename, "wb") as f:

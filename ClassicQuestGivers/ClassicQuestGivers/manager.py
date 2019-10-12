@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from scrapy import Item
-from .db import Quest
+from .db import Quest, Requirement
 from . import DATABASE_ADRESS
 
 
@@ -42,6 +42,13 @@ class Manager:
     def add_quest(self, item: Item):
         exists = self.session.query(Quest.id).filter_by(id=item["id"]).all()
         if not exists:
-            quest = Quest(**dict(item))
+            quest = dict(item)
+            if "requirements" in quest:
+                requirements = quest.pop("requirements")
+                quest = Quest(**quest)
+                for requirement in requirements:
+                    quest.requirements.append(Requirement(quest_id=requirement))
+            else:
+                quest = Quest(**quest)
             self.session.add(quest)
             self.session.commit()

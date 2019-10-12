@@ -46,6 +46,7 @@ class ZoneSpider(Spider):
         :return:
         """
         elements: List[Selector] = response.xpath('//*[@id="tab-quests"]/div[2]/table/tbody/tr')
+
         for element in elements:
             quest = Quest()
             quest["name"] = element.xpath("td[2]/div/a/text()").get()
@@ -80,26 +81,86 @@ class ZoneSpider(Spider):
         :param response: splash rendered http response
         :return:
         """
+
         quest = response.meta.get("quest")
-        self.parse_quick_facts(response.xpath('//*[@id="infobox-contents-0"]/ul/li/div/span'), quest)
+        infobox: Selector = response.xpath('//*[@id="infobox-alternate-position"]/table')
+
+        self.parse_quick_facts(infobox.xpath('//th[@id="infobox-quick-facts"]/../../tr/td/div/ul/li'), quest)
+
+        self.parse_series(infobox.xpath('//th[@id="infobox-series"]/../../tr/td//table[@class="series"]/tbody'), quest)
+
+        self.parse_requirements(infobox.xpath('//th[@id="infobox-requires"]/../../tr/td/div/a'), quest)
         yield quest
 
     def parse_quick_facts(self, selector: Selector, quest: Quest):
         """
-        parses the quick facts section on a wowhead quest page
+        parses a wowhead quests quick facts section
 
-        :param selector: selector of the quick facts section
-        :param quest: quest item to store gathered info in
+        extracts npc name, npc link and if the quest is repeatable or not
+        :param selector: selection of the quick facts section
+        :param quest: quest object to store gathered info in
         :return:
         """
-        result = selector.re(r"Start:\s(.*</a>)")
-        if result:
-            element = Selector(text=result[0])
-            quest["npc"] = element.xpath("//a/text()").get()
-            quest["npc_link"] = self.base_url + element.xpath("//a/@href").get()
-        else:
-            quest["npc"] = "Unknown"
-            quest["npc_link"] = "Unknown"
+        npc_a_tag = selector.xpath('div/span[contains(text(), "Start:")]/a')
+        npc = npc_a_tag.xpath('text()').get()
+        npc_link = npc_a_tag.xpath('@href').get()
+
+        quest["npc"] = npc if npc else "Unknown"
+        quest["npc_link"] = self.base_url + npc_link if npc_link else "Unknown"
+        quest["repeatable"] = True if selector.xpath('div[contains(text(), "Repeatable")]/text()') else False
+
+    def parse_series(self, selector: Selector, quest: Quest):
+        """
+        parses a wowhead quests series section
+
+        extracts a quests id from a previously required quest via series
+        and adds a requirement to the quest object
+        :param selector: selection of the series section
+        :param quest: quest object to store gathered info in
+        :return:
+        """
+        if selector:
+            # if its a chain quest
+            if selector.xpath('tr/th[contains(text(), "1.")]/../td/div/b'):
+                # current quest is the first in series, no series requirements
+                pass
+            elif selector.xpath('tr/th[contains(text(), "1.")]/../td/div/span/b'):
+                # current quest is the firs quest in the series, no series requirements
+                pass
+            else:
+                previous_quest = selector.xpath(
+                    'tr/td/div/b/../../../preceding-sibling::'
+                    'tr[1]/td/div/a')
+                if previous_quest:
+                    self.parse_requirements(previous_quest, quest)
+                else:
+                    # previous quest is either horde or alliance or both
+                    previous_alliance_quest = selector.xpath(
+                        'tr/td/div/span/b/../../../../preceding-sibling::'
+                        'tr[1]/td/div/span[@class="icon-alliance-padded"]/a')
+                    previous_horde_quest = selector.xpath(
+                            'tr/td/div/span/b/../../../../preceding-sibling::'
+                            'tr[1]/td/div/span[@class="icon-horde"]/a')
+                    self.parse_requirements(previous_alliance_quest, quest)
+                    self.parse_requirements(previous_horde_quest, quest)
+
+    @staticmethod
+    def parse_requirements(selectors: List[Selector], quest: Quest) -> None:
+        """
+        parses selections of html a tags from quests
+
+        adds given selection of quest links id as a requirement in the given quest boject
+        :param selectors: selection of quests
+        :param quest:quest object to store gathered info in
+        :return:
+        """
+        for selector in selectors:
+            quest_link = selector.xpath('@href').get()
+            quest_id = int(quest_link.split("=")[-1].split("/")[0])
+            if "requirements" in quest:
+                quest["requirements"].update({quest_id})
+            else:
+                quest["requirements"] = {quest_id}
 
     def parse(self, response: SplashResponse):
         """

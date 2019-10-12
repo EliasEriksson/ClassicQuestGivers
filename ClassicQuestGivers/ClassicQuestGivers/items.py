@@ -9,9 +9,6 @@ import scrapy
 
 
 class Quest(scrapy.Item):
-    """
-    data storage for craled info
-    """
     id = scrapy.Field()
     name = scrapy.Field()
     link = scrapy.Field()
@@ -20,4 +17,6 @@ class Quest(scrapy.Item):
     faction = scrapy.Field()
     npc = scrapy.Field()
     npc_link = scrapy.Field()
+    repeatable = scrapy.Field()
+    requirements = scrapy.Field()
     zone = scrapy.Field()
