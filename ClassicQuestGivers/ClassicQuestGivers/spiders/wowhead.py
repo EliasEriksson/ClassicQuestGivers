@@ -111,12 +111,12 @@ class ZoneSpider(Spider):
         npc_a_tag = selector.xpath('div/span[contains(text(), "Start:")]/a')
         npc = npc_a_tag.xpath('text()').get()
         npc_link = npc_a_tag.xpath('@href').get()
-        class_ = selector.xpath('div[contains(text(), "Class: ")]/a/span/text()')
+        # class_ = selector.xpath('div[contains(text(), "Class: ")]/a/span/text()')
 
         quest["npc"] = npc if npc else "Unknown"
         quest["npc_link"] = self.base_url + npc_link if npc_link else "Unknown"
         quest["repeatable"] = True if selector.xpath('div[contains(text(), "Repeatable")]/text()') else False
-        quest["class"] = class_ if class_ else "None"
+        # quest["class"] = class_ if class_ else "None"
 
     def parse_series(self, selector: Selector, quest: Quest):
         """
