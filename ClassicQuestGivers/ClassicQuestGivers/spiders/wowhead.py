@@ -13,8 +13,9 @@ class ZoneSpider(Spider):
     base_url = "https://classic.wowhead.com"
 
     def format_zone_url(self, zone: str):
-        zone = zone.lower().replace(" ", "-").replace("'", "")
-        return f"{self.base_url}/{zone}#quests"
+        zone = zone.lower().replace(" ", "-").replace("'", "").strip()
+        url = f"{self.base_url}/{zone}#quests"
+        return url
 
     def build_urls(self) -> List[str]:
         """
@@ -173,3 +174,8 @@ class ZoneSpider(Spider):
         :return:
         """
         self.log(f"Failed to parse {response.url} with my parsers.")
+
+
+if __name__ == '__main__':
+    spider = ZoneSpider()
+    print()
