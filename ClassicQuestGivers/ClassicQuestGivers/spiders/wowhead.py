@@ -9,6 +9,7 @@ from .. import PROJECT_ROOT
 
 
 class ZoneSpider(Spider):
+    # TODO parse for class
     name = "wowhead"
     base_url = "https://classic.wowhead.com"
 
@@ -55,7 +56,7 @@ class ZoneSpider(Spider):
             quest = Quest()
             quest["name"] = element.xpath("td[2]/div/a/text()").get()
             quest["link"] = self.base_url + element.xpath("td[2]/div/a/@href").get()
-            quest["id"] = int(quest["link"].split("=")[-1])
+            quest["id"] = int(quest["link"].split("=")[-1].split("/")[0])
             quest["zone"] = response.url.split("/")[-1].split("#")[0]
 
             level = element.xpath("td[3]/text()").get()
