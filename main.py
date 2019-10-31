@@ -48,14 +48,13 @@ def printf(text: str):
     os.system(f'printf "{text}\n\n"')
 
 
-def get_wl_profile(path: Path) -> dict:
+def get_wl_profile(content: str) -> dict:
     """
     reads +Wowhead_Looter.lua file for wlProfile variable value
 
-    :param path: path to +Wowhead_Looter.lua
+    :param content: io boject of +Wowhead_Looter.lua
     :return: content of wlProfile see +Wowhead_Looter.lua for structure
     """
-    content = path.read_text()
     match = re.search(r"wlProfile\s=\s({.*},\n})\n", content, re.DOTALL)
     if match:
         var = lua.decode(match.groups()[0])
@@ -63,19 +62,28 @@ def get_wl_profile(path: Path) -> dict:
     raise RuntimeError("Could not find variable wlProfile in given lua file.")
 
 
-def get_wl_profile_data(path: Path) -> dict:
+def get_wl_profile_data(content: str) -> dict:
     """
     reads +Wowhead_Looter.lua file for wlProfileData variable value
 
-    :param path: path to +Wowhead_Looter.lua
+    :param content: path to +Wowhead_Looter.lua
     :return: content of wlProfileData see +Wowhead_Looter.lua for structure
     """
-    content = path.read_text()
     match = re.search(r"wlProfileData\s=\s({.*},\n})\n", content, re.DOTALL)
     if match:
         var = lua.decode(match.groups()[0])
         return var
     raise RuntimeError("Could not find variable wlProfileData in given lua file.")
+
+
+def get_variable(variable_name: str, content: str):
+    regex = variable_name + r"\s=\s({.*\n})(?:\nwl|$|\n*$)"
+
+    match = re.search(regex, content, re.DOTALL)
+    if match:
+        return lua.decode(match.groups()[0])
+    error = f"could not find variable {variable_name}"
+    raise RuntimeError(error)
 
 
 def parse():
@@ -100,8 +108,11 @@ def parse():
         path = Path(load_json("settings.json")["wow_path"])
         path = path.joinpath("_classic_/WTF/Account/101169538#2/SavedVariables/+Wowhead_Looter.lua")
 
-    profile = get_wl_profile(path)
-    profile_data = get_wl_profile_data(path)
+    with open(str(path), "r") as file:
+        content = file.read()
+    get_variable("wlRealmList", content)
+    profile = get_wl_profile(content)
+    profile_data = get_wl_profile_data(content)
     character = "^".join((args.character.capitalize(), args.realm.capitalize()))
 
     level = profile_data[character]["level"]

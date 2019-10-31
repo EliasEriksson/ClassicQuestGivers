@@ -12,6 +12,10 @@ class ZoneSpider(Spider):
     name = "wowhead"
     base_url = "https://classic.wowhead.com"
 
+    def format_zone_url(self, zone: str):
+        zone = zone.lower().replace(" ", "-").replace("'", "")
+        return f"{self.base_url}/{zone}#quests"
+
     def build_urls(self) -> List[str]:
         """
         builds the start urls based on the names in zones.txt in the project root
@@ -20,8 +24,7 @@ class ZoneSpider(Spider):
         """
         path = Path(PROJECT_ROOT).joinpath("zones.txt")
         with open(str(path)) as zones:
-            urls = [f"{self.base_url}/{zone.lower().strip().replace(' ', '-')}#quests"
-                    for zone in zones]
+            urls = [self.format_zone_url(zone) for zone in zones]
         return urls
 
     def start_requests(self):

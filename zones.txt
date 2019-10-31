@@ -1,40 +1,82 @@
-Dun Morogh
-Durotar
-Elwynn Forest
-Mulgore
-Teldrassil
-Tirisfal Glades
+Blackrock Depths
+Maraudon
+Dire Maul
+Zul'Farrak
+Razorfen Kraul
+The Temple of Atal'Hakkar
+Uldaman
+Scarlet Monastery
+Desolace
+Azshara
+Stratholme
+Feralas
+Felwood
+Scholomance
+Molten Core
+Badlands
+Blackfathom Deeps
+The Hinterlands
+Razorfen Downs
+Shadowfang Keep
+Winterspring
+Searing Gorge
+Moonglade
+Eastern Plaguelands
+Blackrock Spire
+Gnomeregan
+Un'Goro Crater
+Western Plaguelands
+Stranglethorn Vale
+Blasted Lands
+Dustwallow Marsh
+Swamp of Sorrows
+Tanaris
+Wailing Caverns
+Arathi Highlands
+Ashenvale
+Stonetalon Mountains
+Silithus
+Burning Steppes
+The Deadmines
+Hillsbrad Foothills
+Ragefire Chasm
+The Stockade
+Thousand Needles
+Redridge Mountains
+Duskwood
+Wetlands
+Onyxia's Lair
+The Barrens
 Darkshore
+Blackwing Lair
+Tirisfal Glades
+Alterac Mountains
 Loch Modan
 Silverpine Forest
+Naxxramas
+Dun Morogh
 Westfall
-Barrens
-Redridge Mountains
-Stonetalon Mountains
-Ashenvale
-Duskwood
-Hillsbrad Foothills
-Wetlands
-Thousand Needles
-Alterac Mountains
-Arathi Highlands
-Desolace
-Stranglethorn Vale
-Dustwallow Marsh
-Badlands
-Swamp of Sorrows
-Feralas
-Hinterlands
-Tanaris
-Searing Gorge
-Azshara
-Blasted Lands
-Ungoro Crater
-Felwood
-Burning Steppes
-Western Plaguelands
-Eastern Plaguelands
-Winterspring
+Zul'Gurub
+Stormwind City
 Deadwind Pass
-Moonglade
-Silithus
+Darnassus
+Orgrimmar
+Ironforge
+Elwynn Forest
+Thunder Bluff
+Sunken Temple
+Undercity
+Teldrassil
+Durotar
+Mulgore
+Ruins of Ahn'Qiraj
+Blackrock Mountain
+Ahn'Qiraj
+Alterac Valley
+Warsong Gulch
+Arathi Basin
+Deeprun Tram
+The Veiled Sea
+Caverns of Time
+The Great Sea
+Emerald Forest
