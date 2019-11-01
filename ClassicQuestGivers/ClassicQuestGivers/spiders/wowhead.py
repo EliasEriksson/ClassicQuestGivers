@@ -9,7 +9,6 @@ from .. import PROJECT_ROOT
 
 
 class ZoneSpider(Spider):
-    # TODO parse for dungeon / pvp / raid tags
     name = "wowhead"
     base_url = "https://classic.wowhead.com"
 
@@ -110,11 +109,13 @@ class ZoneSpider(Spider):
         npc = npc_a_tag.xpath('text()').get()
         npc_link = npc_a_tag.xpath('@href').get()
         cls = selector.xpath('div[contains(text(), "Class: ")]/a/span/text()')
+        type = selector.xpath('div[contains(text(), "Type: ")]/text()')
 
         quest["npc"] = npc if npc else "Unknown"
         quest["npc_link"] = self.base_url + npc_link if npc_link else "Unknown"
         quest["repeatable"] = True if selector.xpath('div[contains(text(), "Repeatable")]/text()') else False
-        quest["cls"] = cls.get().lower()[0] if cls else "None"
+        quest["cls"] = cls.get().lower()[0] if cls else "none"
+        quest["type"] = type.get().lower().strip("type:").strip() if type else "none"
 
     def parse_series(self, selector: Selector, quest: Quest):
         """
