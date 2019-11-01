@@ -17,6 +17,7 @@ class Quest(Base):
     npc = Column(String)
     npc_link = Column(String)
     repeatable = Column(Boolean)
+    cls = Column(String)
     zone = Column(String)
     requirements = relationship("Requirement", back_populates=__tablename__)
 

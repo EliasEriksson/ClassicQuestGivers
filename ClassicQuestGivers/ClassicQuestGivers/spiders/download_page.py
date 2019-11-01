@@ -11,7 +11,7 @@ class ZoneSpider(Spider):
     name = "quests"
 
     def start_requests(self):
-        urls = ["https://classic.wowhead.com/quest=735/the-star-the-hand-and-the-heart"]
+        urls = ["https://classic.wowhead.com/quest=1640/beat-bartleby"]
 
         for url in urls:
             yield scrapy_splash.SplashRequest(url=url, callback=self.parse)
